@@ -21,12 +21,12 @@ function getReqHeaderObject(request) {
 }
 
 function traverseObject(pathArr, obj) {
-  if(pathArr.length === 0) {
+  if (pathArr.length === 0) {
     return obj;
   }
   const key = pathArr.shift();
 
-  if(!obj.hasOwnProperty(key)) {
+  if (!obj.hasOwnProperty(key)) {
     return obj;
   }
 
@@ -39,12 +39,12 @@ function filterBodyByPath(request, body) {
   const pathName = url.pathname;
 
   // No filter
-  if(pathName === '/') {
+  if (pathName === "/") {
     return body;
   }
 
-  const objectPath = url.pathname.split('/');
-  if(objectPath.length < 2) {
+  const objectPath = url.pathname.split("/");
+  if (objectPath.length < 2) {
     return body;
   }
 

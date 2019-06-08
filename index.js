@@ -20,6 +20,40 @@ function getReqHeaderObject(request) {
   return reqHeaders;
 }
 
+function traverseObject(pathArr, obj) {
+  if(pathArr.length === 0) {
+    return obj;
+  }
+  const key = pathArr.shift();
+
+  if(!obj.hasOwnProperty(key)) {
+    return obj;
+  }
+
+  return traverseObject(pathArr, obj[key]);
+}
+
+function filterBodyByPath(request, body) {
+  const url = new URL(request.url);
+  console.debug(url);
+  const pathName = url.pathname;
+
+  // No filter
+  if(pathName === '/') {
+    return body;
+  }
+
+  const objectPath = url.pathname.split('/');
+  if(objectPath.length < 2) {
+    return body;
+  }
+
+  // Remove first empty element (caused by leading '/' of url)
+  objectPath.shift();
+
+  return traverseObject(objectPath, body);
+}
+
 /**
  * Respond to the request
  * @param {Request} request
@@ -34,7 +68,9 @@ async function handleRequest(request) {
     reqHeaders: getReqHeaderObject(request)
   };
 
-  return new Response(JSON.stringify(body, null, 2), {
+  const filteredBody = filterBodyByPath(request, body);
+
+  return new Response(JSON.stringify(filteredBody, null, 2), {
     headers: {
       "Content-Type": "application/json"
     },

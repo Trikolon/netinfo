@@ -68,14 +68,16 @@ async function handleRequest(request) {
   };
 
   const filteredBody = filterBodyByPath(request, body);
-  let stringBody = filteredBody;
-  if (typeof stringBody !== "string") {
-    stringBody = JSON.stringify(filteredBody, null, 2);
-  }
+  const contentType =
+    typeof filteredBody === "object" ? "application/json" : "text/plain";
+  const stringBody =
+    typeof filteredBody === "string"
+      ? filteredBody
+      : JSON.stringify(filteredBody, null, 2);
 
   return new Response(stringBody, {
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": contentType
     },
     status: 200
   });

@@ -35,7 +35,6 @@ function traverseObject(pathArr, obj) {
 
 function filterBodyByPath(request, body) {
   const url = new URL(request.url);
-  console.debug(url);
   const pathName = url.pathname;
 
   // No filter
@@ -69,8 +68,12 @@ async function handleRequest(request) {
   };
 
   const filteredBody = filterBodyByPath(request, body);
+  let stringBody = filteredBody;
+  if (typeof stringBody !== "string") {
+    stringBody = JSON.stringify(filteredBody, null, 2);
+  }
 
-  return new Response(JSON.stringify(filteredBody, null, 2), {
+  return new Response(stringBody, {
     headers: {
       "Content-Type": "application/json"
     },
